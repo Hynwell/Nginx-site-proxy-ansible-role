@@ -1,0 +1,6 @@
+nginx_streams:
+  - name: grok
+    domains:
+      - grok.com
+      - accounts.x.ai
+

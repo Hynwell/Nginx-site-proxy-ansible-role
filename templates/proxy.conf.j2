@@ -1,0 +1,26 @@
+# Шаблон для stream
+stream {
+    map $ssl_preread_server_name $backend {
+{% for service in nginx_streams %}
+{%   for domain in service.domains %}
+        {{ domain }} {{ domain | regex_replace('[^a-zA-Z0-9]', '_') }}_backend;
+{%   endfor %}
+{% endfor %}
+    }
+
+{% for service in nginx_streams %}
+{%   for domain in service.domains %}
+    upstream {{ domain | regex_replace('[^a-zA-Z0-9]', '_') }}_backend {
+        server {{ domain }}:443;
+    }
+{%   endfor %}
+{% endfor %}
+
+    server {
+        listen 443;
+        ssl_preread on;
+        proxy_pass $backend;
+        proxy_timeout 10s;
+        proxy_connect_timeout 5s;
+    }
+}

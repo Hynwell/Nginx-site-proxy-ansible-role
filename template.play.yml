@@ -1,0 +1,64 @@
+---
+- name: Настройка nginx с upstream через stream
+  hosts: all
+  become: true
+  vars:
+    ansible_user: admin
+    nginx_streams:
+      - name: grok
+        domains:
+          - grok.com
+          - accounts.x.ai
+      - name: copilot
+        domains:
+          - copilot.microsoft.com
+          - sydney.bing.com
+          - edgeservices.bing.com
+      - name: cluade
+        domains:
+          - claude.ai
+      - name: chatgpt
+        domains:
+          - chatgpt.com
+          - ab.chatgpt.com
+          - webrtc.chatgpt.com
+      - name: openai
+        domains:
+          - auth.openai.com
+          - auth0.openai.com
+          - platform.openai.com
+          - tcr9i.chat.openai.com
+          - android.chat.openai.com
+          - files.oaiusercontent.com
+      - name: oaistatic
+        domains:
+          - cdn.oaistatic.com
+      - name: auth0
+        domains:
+          - cdn.auth0.com
+      - name: google_gemini
+        domains:
+          - gemini.google.com
+          - aistudio.google.com
+          - generativelanguage.googleapis.com
+          - alkalimakersuite-pa.clients6.google.com
+          - labs.google
+          - notebooklm.google
+          - notebooklm.google.com
+          - aitestkitchen.withgoogle.com
+          - aisandbox-pa.googleapis.com
+          - o.pki.goog
+      - name: spotify
+        domains:
+          - api.spotify.com
+          - gew1-spclient.spotify.com
+          - spclient.wg.spotify.com
+          - api-partner.spotify.com
+          - aet.spotify.com
+          - www.spotify.com
+          - accounts.spotify.com
+      - name: notion
+        domains:
+          - www.notion.so
+  roles:
+    - role: ../nginx_site_proxy

@@ -1,0 +1,55 @@
+---
+- name: Установить nginx
+  become: true
+  ansible.builtin.package:
+    name: nginx
+    state: present
+
+- name: Создать папку для stream-конфигов
+  become: true
+  ansible.builtin.file:
+    path: /etc/nginx/stream
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Скопировать шаблон stream
+  become: true
+  ansible.builtin.template:
+    src: proxy.conf.j2
+    dest: /etc/nginx/stream/proxy.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Перезапустить nginx
+
+- name: Включить stream include в nginx.conf
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: '^http.*}\s*$'
+    line: 'include /etc/nginx/stream/*.conf;'
+    state: present
+  notify: Перезапустить nginx
+
+- name: Проверить конфиг nginx перед перезапуском
+  become: true
+  ansible.builtin.command: nginx -t
+  register: nginx_test_result
+  changed_when: false
+  failed_when: nginx_test_result.rc != 0
+  notify: Перезапустить nginx
+
+- name: Вывести строку для hosts
+  ansible.builtin.pause:
+    prompt: |
+    
+      Скопируйте следующий текст для /etc/hosts:
+
+      {% for service in nginx_streams %}
+      # {{ service.name }}
+      {{ ansible_default_ipv4.address }} {{ service.domains | join(' ') }}
+
+      {% endfor %}
+    seconds: 1
