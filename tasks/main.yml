@@ -2,7 +2,7 @@
 - name: Установить nginx
   become: true
   ansible.builtin.package:
-    name: nginx
+    name: nginx-full
     state: present
 
 - name: Создать папку для stream-конфигов
